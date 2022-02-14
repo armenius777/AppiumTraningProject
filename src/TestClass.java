@@ -7,6 +7,7 @@ import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 import java.net.URL;
+import java.util.List;
 
 public class TestClass {
 
@@ -19,10 +20,12 @@ public class TestClass {
     public static final String SEARCH_FIELD_ID = "org.wikipedia:id/search_src_text";
     public static final String SEARCH_RESULTS_AREA_ID = "org.wikipedia:id/search_results_list";
     public static final String CLEAR_SEARCH_BUTTON_ID = "org.wikipedia:id/search_close_btn";
+    public static final String RESULTS_TITLE_ID = "org.wikipedia:id/page_list_item_title";
 
     //Texts
     public static final String NEW_WAYS_TEXT = "New ways to explore";
     public static final String SEARCH_FIELD_PLACEHOLDER = "Search Wikipedia";
+    public static final String SEARCH_WORD = "JAVA";
 
     @Before
     public void setUp() throws Exception {
@@ -65,7 +68,7 @@ public class TestClass {
     }
 
     @Test
-    public void secondTest() throws InterruptedException {
+    public void secondTest() {
         skipIntro();
         WebElement homepageSearchField =
                 waitForElementPresented(By.xpath(HOMEPAGE_SEARCH_FIELD_XPATH),
@@ -80,10 +83,21 @@ public class TestClass {
                 waitForElementPresented(By.id(CLEAR_SEARCH_BUTTON_ID), 5, "Close button is missing");
         searchCloseBtn.click();
         Assert.assertFalse("Search not canceled", searchResultsArea.isDisplayed());
-        Thread.sleep(10000);
     }
 
-    
+    @Test
+    public void thirdTest() {
+        skipIntro();
+        searchWord(SEARCH_WORD);
+        waitForElementsPresented(By.id(RESULTS_TITLE_ID), 10, "Search result is empty");
+        List<WebElement> resultsList = driver.findElements(By.id(RESULTS_TITLE_ID));
+        for (WebElement result : resultsList) {
+            Assert.assertTrue("Search Result is incorrect",
+                    result.getText().toLowerCase().contains(SEARCH_WORD.toLowerCase()));
+        }
+    }
+
+
     //Wait methods
     private WebElement waitForElementPresented(By by, long timeout, String errorMessage) {
         WebDriverWait wait = new WebDriverWait(driver, timeout);
@@ -91,6 +105,14 @@ public class TestClass {
         return wait.until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
+    private void waitForElementsPresented(By by, long timeout, String errorMessage) {
+        WebDriverWait wait = new WebDriverWait(driver, timeout);
+        wait.withMessage(errorMessage);
+        wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(by, 0));
+    }
+
+
+    //Assert method
     private void assertElementHasText(WebElement element, String expectedText, String errorMessage) {
         try {
             String actualText = element.getText();
@@ -100,10 +122,23 @@ public class TestClass {
         }
     }
 
+
+    // Help methods
     private void skipIntro() {
         WebElement skipButton =
                 waitForElementPresented(By.id(SKIP_BUTTON_ID), 10, "SKIP button is missing");
         skipButton.click();
+    }
+
+    private void searchWord(String word) {
+        WebElement homepageSearchField =
+                waitForElementPresented(By.xpath(HOMEPAGE_SEARCH_FIELD_XPATH),
+                        5, "Search field is missing in the HomePage");
+        homepageSearchField.click();
+        WebElement searchField =
+                waitForElementPresented(By.id(SEARCH_FIELD_ID), 5, "Search field is missing");
+        searchField.sendKeys(word);
+        waitForElementPresented(By.id(SEARCH_RESULTS_AREA_ID), 5, "Search result is empty");
     }
 
 }
