@@ -30,6 +30,7 @@ public class TestClass {
     public static final String SAVED_BUTTON_XPATH = "//android.widget.FrameLayout[@content-desc=\"Saved\"]";
     public static final String SAVED_PUBLICATIONS_FOLDER_ID = "org.wikipedia:id/recycler_view";
     public static final String SAVED_PUBLICATIONS_LIST_XPATH = "//androidx.recyclerview.widget.RecyclerView[@resource-id=\"org.wikipedia:id/reading_list_recycler_view\"]/android.view.ViewGroup";
+    public static final String FIRST_SAVED_PUBLICATION_XPATH = "//androidx.recyclerview.widget.RecyclerView[@resource-id=\"org.wikipedia:id/reading_list_recycler_view\"]/android.view.ViewGroup[2]";
 
 
     //Texts
@@ -141,7 +142,8 @@ public class TestClass {
         List<WebElement> savedPublications = waitForElementsPresented(By.xpath(SAVED_PUBLICATIONS_LIST_XPATH), 10,
                 "Saved publications are missing");
         Assert.assertTrue("", savedPublications.size() > 2);
-        swipeElementToLeft(savedPublications.get(1));
+//        swipeElementToLeft(savedPublications.get(1));
+        deleteSavedPublication();
         Assert.assertTrue("", savedPublications.size() <= 2);
         Thread.sleep(10000);
     }
@@ -232,6 +234,7 @@ public class TestClass {
     }
 
     private void swipeElementToLeft(WebElement element) {
+        System.out.println(driver.manage().window().getSize());
         int leftX = element.getLocation().getX()+10;
         int rightX = leftX + element.getSize().getWidth()-10;
         int upperY = element.getLocation().getY();
@@ -239,11 +242,34 @@ public class TestClass {
         int middleY = (upperY + lowerY) / 2;
 
         TouchAction action = new TouchAction(driver);
+        System.out.println(">>>" + rightX + "<<<< >>>>" + middleY + "<<<");
 //        action.tap(rightX, middleY).perform();
         //TODO this actions isn't worked
         action
                 .press(rightX, middleY)
                 .waitAction(500)
+                .moveTo(leftX, middleY)
+                .release()
+                .perform();
+    }
+
+    // метод, который сам находит элемент, а не полуюает на вход. но всеравно не работает.
+    private void deleteSavedPublication() {
+        WebElement element = waitForElementPresented(By.xpath(FIRST_SAVED_PUBLICATION_XPATH), 10, "Some Error");
+        System.out.println(driver.manage().window().getSize());
+        int leftX = element.getLocation().getX()+10;
+        int rightX = leftX + element.getSize().getWidth()-10;
+        int upperY = element.getLocation().getY();
+        int lowerY = upperY + element.getSize().getHeight();
+        int middleY = (upperY + lowerY) / 2;
+
+        TouchAction action = new TouchAction(driver);
+        System.out.println(">>>" + rightX + "<<<< >>>>" + middleY + "<<<");
+//        action.tap(rightX, middleY).perform();
+        //TODO this actions isn't worked
+        action
+                .press(rightX, middleY)
+                .waitAction(300)
                 .moveTo(leftX, middleY)
                 .release()
                 .perform();
