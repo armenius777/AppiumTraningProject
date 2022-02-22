@@ -31,6 +31,8 @@ public class TestClass {
     public static final String SAVED_PUBLICATIONS_FOLDER_ID = "org.wikipedia:id/recycler_view";
     public static final String SAVED_PUBLICATIONS_LIST_XPATH = "//androidx.recyclerview.widget.RecyclerView[@resource-id=\"org.wikipedia:id/reading_list_recycler_view\"]/android.view.ViewGroup";
     public static final String FIRST_SAVED_PUBLICATION_XPATH = "//androidx.recyclerview.widget.RecyclerView[@resource-id=\"org.wikipedia:id/reading_list_recycler_view\"]/android.view.ViewGroup[2]";
+    public static final String REMOVE_BUTTON_ID = "org.wikipedia:id/reading_list_item_remove";
+    public static final String NOTIFICATION_TEXT_ID = "org.wikipedia:id/snackbar_text";
 
 
     //Texts
@@ -109,7 +111,7 @@ public class TestClass {
 //    }
 
     @Test
-    public void testSavePublicationsAndRemove() throws InterruptedException {
+    public void testSavePublicationsAndRemove() {
         skipIntro();
         searchWord(SEARCH_WORD);
         waitForElementsPresented(By.id(RESULTS_TITLE_ID), 10, "Search result is empty");
@@ -143,9 +145,11 @@ public class TestClass {
                 "Saved publications are missing");
         Assert.assertTrue("", savedPublications.size() > 2);
 //        swipeElementToLeft(savedPublications.get(1));
-        deleteSavedPublication();
-        Assert.assertTrue("", savedPublications.size() <= 2);
-        Thread.sleep(10000);
+        deleteFirstSavedPublication();
+        waitForElementPresented(By.id(NOTIFICATION_TEXT_ID), 10, "Notification is missing");
+        savedPublications = waitForElementsPresented(By.xpath(SAVED_PUBLICATIONS_LIST_XPATH), 10,
+                "Saved publications are missing");
+        Assert.assertEquals("Publication is not deleted", 2, savedPublications.size());
     }
 
 
@@ -247,32 +251,23 @@ public class TestClass {
         //TODO this actions isn't worked
         action
                 .press(rightX, middleY)
-                .waitAction(500)
+                .waitAction(300)
                 .moveTo(leftX, middleY)
                 .release()
                 .perform();
     }
 
-    // метод, который сам находит элемент, а не полуюает на вход. но всеравно не работает.
-    private void deleteSavedPublication() {
-        WebElement element = waitForElementPresented(By.xpath(FIRST_SAVED_PUBLICATION_XPATH), 10, "Some Error");
-        System.out.println(driver.manage().window().getSize());
-        int leftX = element.getLocation().getX()+10;
-        int rightX = leftX + element.getSize().getWidth()-10;
-        int upperY = element.getLocation().getY();
-        int lowerY = upperY + element.getSize().getHeight();
-        int middleY = (upperY + lowerY) / 2;
+    private void deleteFirstSavedPublication() {
+        WebElement firstPublication = waitForElementPresented(By.xpath(FIRST_SAVED_PUBLICATION_XPATH), 10, "Some Error");
 
         TouchAction action = new TouchAction(driver);
-        System.out.println(">>>" + rightX + "<<<< >>>>" + middleY + "<<<");
-//        action.tap(rightX, middleY).perform();
-        //TODO this actions isn't worked
-        action
-                .press(rightX, middleY)
-                .waitAction(300)
-                .moveTo(leftX, middleY)
-                .release()
-                .perform();
+        action.longPress(firstPublication);
+        action.perform();
+
+        quickSwipeUp();
+        WebElement removeButton = waitForElementPresented(By.id(REMOVE_BUTTON_ID), 10, "Remove button is not shown");
+        removeButton.click();
+
     }
 
 }
