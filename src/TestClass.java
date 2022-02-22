@@ -33,12 +33,15 @@ public class TestClass {
     public static final String FIRST_SAVED_PUBLICATION_XPATH = "//androidx.recyclerview.widget.RecyclerView[@resource-id=\"org.wikipedia:id/reading_list_recycler_view\"]/android.view.ViewGroup[2]";
     public static final String REMOVE_BUTTON_ID = "org.wikipedia:id/reading_list_item_remove";
     public static final String NOTIFICATION_TEXT_ID = "org.wikipedia:id/snackbar_text";
+    public static final String SAVED_PUBLICATION_TITLE_ID = "org.wikipedia:id/page_list_item_title";
+    public static final String PUBLICATION_TITLE_XPATH = "//android.view.View[@resource-id=\"pcs\"]/android.view.View[1]/android.view.View[1]";
 
 
     //Texts
     public static final String NEW_WAYS_TEXT = "New ways to explore";
     public static final String SEARCH_FIELD_PLACEHOLDER = "Search Wikipedia";
     public static final String SEARCH_WORD = "JAVA";
+    public static final String PUBLICATION_TITLE_TEXT = "JavaScript";
 
     @Before
     public void setUp() throws Exception {
@@ -150,6 +153,13 @@ public class TestClass {
         savedPublications = waitForElementsPresented(By.xpath(SAVED_PUBLICATIONS_LIST_XPATH), 10,
                 "Saved publications are missing");
         Assert.assertEquals("Publication is not deleted", 2, savedPublications.size());
+        WebElement savedPublication = waitForElementPresented(By.id(SAVED_PUBLICATION_TITLE_ID), 10,
+                "Publication title is missing from folder");
+        String savedPublicationTitle = savedPublication.getText();
+        savedPublication.click();
+        String publicationTitle = waitForElementPresented(By.xpath(PUBLICATION_TITLE_XPATH), 10,
+                "Publication title is not shown in the publication").getText();
+        Assert.assertEquals("Titles aren't equals", savedPublicationTitle, publicationTitle);
     }
 
 
