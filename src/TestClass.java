@@ -5,6 +5,7 @@ import io.appium.java_client.android.AndroidDriver;
 import org.junit.*;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
+import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.DesiredCapabilities;
 import org.openqa.selenium.support.ui.ExpectedConditions;
@@ -56,6 +57,7 @@ public class TestClass {
         capabilities.setCapability("app", "D:\\JavaAppiumAutomation\\AppiumTraningProject\\apks\\org.wikipedia.apk");
 
         driver = new AndroidDriver(new URL("http://127.0.0.1:4723/wd/hub"), capabilities);
+        driver.rotate(ScreenOrientation.PORTRAIT);
     }
 
     @After
@@ -167,6 +169,7 @@ public class TestClass {
     @Description("Ex6: Тест: assert title")
     public void checkElementPresentedWithoutWait() {
         skipIntro();
+        driver.rotate(ScreenOrientation.LANDSCAPE); //добавлен поворот для задачи 7.
         searchWord(SEARCH_WORD);
         waitForElementsPresented(By.id(RESULTS_TITLE_ID), 10, "Search result is empty");
         List<WebElement> resultsList = driver.findElements(By.id(RESULTS_TITLE_ID));
