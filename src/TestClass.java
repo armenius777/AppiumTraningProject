@@ -1,3 +1,4 @@
+import com.sun.org.glassfish.gmbal.Description;
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
 import io.appium.java_client.android.AndroidDriver;
@@ -162,6 +163,18 @@ public class TestClass {
         Assert.assertEquals("Titles aren't equals", savedPublicationTitle, publicationTitle);
     }
 
+    @Test
+    @Description("Ex6: Тест: assert title")
+    public void checkElementPresentedWithoutWait() {
+        skipIntro();
+        searchWord(SEARCH_WORD);
+        waitForElementsPresented(By.id(RESULTS_TITLE_ID), 10, "Search result is empty");
+        List<WebElement> resultsList = driver.findElements(By.id(RESULTS_TITLE_ID));
+        Assert.assertTrue("Search result is empty", resultsList.size() > 0);
+        resultsList.get(1).click();
+        Assert.assertTrue("Publication title is missing", assertElementPresent(By.xpath(PUBLICATION_TITLE_XPATH)));
+    }
+
 
     //Wait methods
     private WebElement waitForElementPresented(By by, long timeout, String errorMessage) {
@@ -191,6 +204,18 @@ public class TestClass {
         } catch (Exception ex){
             System.out.println("Element not found");
         }
+    }
+
+    private boolean assertElementPresent(By by) {
+        boolean result = false;
+        try {
+            if (driver.findElement(by).isDisplayed()) {
+                result = true;
+            }
+        } catch (Exception ex) {
+            System.out.println("Can't find element");
+        }
+        return result;
     }
 
 
