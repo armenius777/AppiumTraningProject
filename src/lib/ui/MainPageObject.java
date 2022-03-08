@@ -2,7 +2,6 @@ package lib.ui;
 
 import io.appium.java_client.AppiumDriver;
 import io.appium.java_client.TouchAction;
-import lib.Locators;
 import org.junit.Assert;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Dimension;
@@ -11,6 +10,7 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 import java.util.List;
+import java.util.regex.Pattern;
 
 public class MainPageObject {
 
@@ -20,22 +20,28 @@ public class MainPageObject {
         this.driver = driver;
     }
 
-
     //Wait methods
-    public WebElement waitForElementPresented(By by, long timeout, String errorMessage) {
+    public WebElement waitForElementPresented(String locator, long timeout, String errorMessage) {
+        By by = this.getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, timeout);
         wait.withMessage(errorMessage + "\n");
         return wait.until(ExpectedConditions.presenceOfElementLocated(by));
     }
 
-    public List<WebElement> waitForElementsPresented(By by, long timeout, String errorMessage) {
+    public List<WebElement> waitForElementsPresented(String locator, long timeout, String errorMessage) {
+        By by = this.getLocatorByString(locator);
         WebDriverWait wait = new WebDriverWait(driver, timeout);
         wait.withMessage(errorMessage);
         return wait.until(ExpectedConditions.numberOfElementsToBeMoreThan(by, 0));
     }
 
-    public WebElement waitForElementAndClear(By by, String errorMessage, long timeoutInSeconds) {
-        WebElement element = waitForElementPresented(by,timeoutInSeconds, errorMessage);
+    public void waitForElementAndClick(String locator, long timeout, String errorMessage) {
+        WebElement element = waitForElementPresented(locator, timeout, errorMessage);
+        element.click();
+    }
+
+    public WebElement waitForElementAndClear(String locator, String errorMessage, long timeoutInSeconds) {
+        WebElement element = waitForElementPresented(locator, timeoutInSeconds, errorMessage);
         element.clear();
         return element;
     }
@@ -51,7 +57,8 @@ public class MainPageObject {
         }
     }
 
-    public boolean assertElementPresent(By by) {
+    public boolean assertElementPresent(String locator) {
+        By by = this.getLocatorByString(locator);
         boolean result = false;
         try {
             if (driver.findElement(by).isDisplayed()) {
@@ -68,26 +75,27 @@ public class MainPageObject {
     public void swipeUp(int timeOfSwipe) {
         TouchAction action = new TouchAction(driver);
         Dimension screenSize = driver.manage().window().getSize();
-        int x = screenSize.width / 2;
-        int startY = (int) (screenSize.height * 0.8);
-        int endY = (int) (screenSize.height * 0.2);
-        action
-                .press(x, startY)
-                .waitAction(timeOfSwipe)
-                .moveTo(x, endY)
-                .release()
-                .perform();
+//        int x = screenSize.width / 2;
+//        int startY = (int) (screenSize.height * 0.8);
+//        int endY = (int) (screenSize.height * 0.2);
+//        action
+//                .press(x, startY)
+//                .waitAction(timeOfSwipe)
+//                .moveTo(x, endY)
+//                .release()
+//                .perform();
     }
 
     public void quickSwipeUp() {
         swipeUp(200);
     }
 
-    public void swipeUpToElement(By by, int maxSwipes, String errorMessage) {
+    public void swipeUpToElement(String locator, int maxSwipes, String errorMessage) {
+        By by = this.getLocatorByString(locator);
         int currentSwipes = 0;
         while (driver.findElements(by).size() == 0) {
             if (currentSwipes > maxSwipes) {
-                waitForElementPresented(by, 0, "Element not found after all swipes");
+                waitForElementPresented(locator, 0, "Element not found after all swipes");
                 return;
             }
             quickSwipeUp();
@@ -95,8 +103,8 @@ public class MainPageObject {
         }
     }
 
-    public void swipeElementToLeft(By by, String errorMessage) {
-        WebElement element = waitForElementPresented(by, 10, errorMessage);
+    public void swipeElementToLeft(String locator, String errorMessage) {
+        WebElement element = waitForElementPresented(locator, 10, errorMessage);
         swipeElementToLeft(element);
     }
 
@@ -112,12 +120,26 @@ public class MainPageObject {
         System.out.println(">>>" + rightX + "<<<< >>>>" + middleY + "<<<");
 //        action.tap(rightX, middleY).perform();
         //TODO this actions isn't worked
-        action
-                .press(rightX, middleY)
-                .waitAction(300)
-                .moveTo(leftX, middleY)
-                .release()
-                .perform();
+//        action
+//                .press(rightX, middleY)
+//                .waitAction(300)
+//                .moveTo(leftX, middleY)
+//                .release()
+//                .perform();
+    }
+
+    private By getLocatorByString(String locatorWithType) {
+        String[] explodedLocator = locatorWithType.split(Pattern.quote(":"), 2);
+        String byType = explodedLocator[0];
+        String locator = explodedLocator[1];
+
+        if (byType.equals("xpath")) {
+            return By.xpath(locator);
+        } else if (byType.equals("id")) {
+            return By.id(locator);
+        } else {
+            throw new IllegalArgumentException("Can't get type of locator. Locator is: " + locatorWithType);
+        }
     }
 
 

@@ -1,9 +1,10 @@
+package tests;
+
 import com.sun.org.glassfish.gmbal.Description;
 import lib.CoreTestCase;
 import lib.Locators;
 import lib.ui.*;
 import org.junit.*;
-import org.openqa.selenium.By;
 import org.openqa.selenium.ScreenOrientation;
 import org.openqa.selenium.WebElement;
 import java.util.List;
@@ -36,7 +37,7 @@ public class TestClass extends CoreTestCase {
         homePage.skipIntro();
         homePage.clickOnHomepageSearchField();
         WebElement searchField =
-                mainPageObject.waitForElementPresented(By.id(Locators.SEARCH_FIELD_ID),
+                mainPageObject.waitForElementPresented(Locators.SEARCH_FIELD_ID,
                         5, "Search field is missing");
         mainPageObject.assertElementHasText(searchField, Constants.SEARCH_FIELD_PLACEHOLDER,
                 "Search field text is incorrect");
@@ -49,10 +50,10 @@ public class TestClass extends CoreTestCase {
         homePage.clickOnHomepageSearchField();
         searchPage.searchWord(Constants.SEARCH_WORD);
         WebElement searchResultsArea =
-                mainPageObject.waitForElementPresented(By.id(Locators.SEARCH_RESULTS_AREA_ID),
+                mainPageObject.waitForElementPresented(Locators.SEARCH_RESULTS_AREA_ID,
                         5, "Search result is empty");
         WebElement searchCloseBtn =
-                mainPageObject.waitForElementPresented(By.id(Locators.CLEAR_SEARCH_BUTTON_ID),
+                mainPageObject.waitForElementPresented(Locators.CLEAR_SEARCH_BUTTON_ID,
                         5, "Close button is missing");
         searchCloseBtn.click();
         Assert.assertFalse("Search not canceled", searchResultsArea.isDisplayed());
@@ -63,7 +64,7 @@ public class TestClass extends CoreTestCase {
     public void testCheckSearch() {
         homePage.skipIntro();
         searchPage.searchWord(Constants.SEARCH_WORD);
-        mainPageObject.waitForElementsPresented(By.id(Locators.RESULTS_TITLE_ID),
+        mainPageObject.waitForElementsPresented(Locators.RESULTS_TITLE_ID,
                 10, "Search result is empty");
         List<WebElement> resultsList = searchPage.getSearchResults();
         for (WebElement result : resultsList) {
@@ -77,7 +78,7 @@ public class TestClass extends CoreTestCase {
     public void testSavePublicationsAndRemove() {
         homePage.skipIntro();
         searchPage.searchWord(Constants.SEARCH_WORD);
-        mainPageObject.waitForElementsPresented(By.id(Locators.RESULTS_TITLE_ID),
+        mainPageObject.waitForElementsPresented(Locators.RESULTS_TITLE_ID,
                 10, "Search result is empty");
         List<WebElement> resultsList = searchPage.getSearchResults();
         Assert.assertTrue("Search result is empty", resultsList.size() > 0);
@@ -94,15 +95,15 @@ public class TestClass extends CoreTestCase {
         Assert.assertTrue("Saved publications size is incorrect", savedPublications.size() > 2);
 //        swipeElementToLeft(savedPublications.get(1));
         publicationsPage.deleteFirstSavedPublication();
-        mainPageObject.waitForElementPresented(By.id(Locators.NOTIFICATION_TEXT_ID), 10,
+        mainPageObject.waitForElementPresented(Locators.NOTIFICATION_TEXT_ID, 10,
                 "Notification is missing");
         savedPublications = publicationsPage.getSavedPublications();
         Assert.assertEquals("Publication is not deleted", 2, savedPublications.size());
-        WebElement savedPublication = mainPageObject.waitForElementPresented(By.id(Locators.SAVED_PUBLICATION_TITLE_ID),
+        WebElement savedPublication = mainPageObject.waitForElementPresented(Locators.SAVED_PUBLICATION_TITLE_ID,
                 10, "Publication title is missing from folder");
         String savedPublicationTitle = savedPublication.getText();
         savedPublication.click();
-        String publicationTitle = mainPageObject.waitForElementPresented(By.xpath(Locators.PUBLICATION_TITLE_XPATH),
+        String publicationTitle = mainPageObject.waitForElementPresented(Locators.PUBLICATION_TITLE_XPATH,
                 10, "Publication title is not shown in the publication").getText();
         Assert.assertEquals("Titles aren't equals", savedPublicationTitle, publicationTitle);
     }
@@ -113,13 +114,13 @@ public class TestClass extends CoreTestCase {
         homePage.skipIntro();
         driver.rotate(ScreenOrientation.LANDSCAPE); //добавлен поворот для задачи 7.
         searchPage.searchWord(Constants.SEARCH_WORD);
-        mainPageObject.waitForElementsPresented(By.id(Locators.RESULTS_TITLE_ID), 10,
+        mainPageObject.waitForElementsPresented(Locators.RESULTS_TITLE_ID, 10,
                 "Search result is empty");
         List<WebElement> resultsList = searchPage.getSearchResults();
         Assert.assertTrue("Search result is empty", resultsList.size() > 0);
         resultsList.get(1).click();
         Assert.assertTrue("Publication title is missing",
-                mainPageObject.assertElementPresent(By.xpath(Locators.PUBLICATION_TITLE_XPATH)));
+                mainPageObject.assertElementPresent(Locators.PUBLICATION_TITLE_XPATH));
     }
 
 }

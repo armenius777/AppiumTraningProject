@@ -12,18 +12,18 @@ public class PostPage extends MainPageObject {
     }
 
     public void savePost() {
-        waitForElementPresented(By.id(Locators.HEADER_IMAGE_ID), 10, "Header image is not shown");
+        waitForElementPresented(Locators.HEADER_IMAGE_ID, 10, "Header image is not shown");
         clickToSaveButton();
     }
 
     public void clickToSaveButton() {
-        WebElement saveButton = waitForElementPresented(By.id(Locators.SAVE_BUTTON_ID),
+        WebElement saveButton = waitForElementPresented(Locators.SAVE_BUTTON_ID,
                 10, "Save button is missing");
         saveButton.click();
     }
 
     public void backToSearchResults() {
-        WebElement backToSearch = waitForElementPresented(By.xpath(Locators.BACK_TO_SEARCH_BUTTON_XPATH), 10,
+        WebElement backToSearch = waitForElementPresented(Locators.BACK_TO_SEARCH_BUTTON_XPATH, 10,
                 "Back to search arrow-button is missing");
         backToSearch.click();
     }

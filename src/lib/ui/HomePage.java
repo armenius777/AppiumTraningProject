@@ -12,33 +12,33 @@ public class HomePage extends MainPageObject {
     }
 
     public void clickOnContinue() {
-        WebElement continueButton =
-                waitForElementPresented(By.id(Locators.CONTINUE_BUTTON_ID), 3, "Continue button is missing");
+        WebElement continueButton = waitForElementPresented(Locators.CONTINUE_BUTTON_ID,
+                3, "Continue button is missing");
         continueButton.click();
     }
 
     public WebElement waitForNewWaysShown() {
-        return waitForElementPresented(By.id(Locators.NEW_WAYS_ID), 5, "New ways text is missing");
+        return waitForElementPresented(Locators.NEW_WAYS_ID, 5, "New ways text is missing");
     }
 
     public void clickOnHomepageSearchField() {
         WebElement homepageSearchField =
-                waitForElementPresented(By.xpath(Locators.HOMEPAGE_SEARCH_FIELD_XPATH),
+                waitForElementPresented(Locators.HOMEPAGE_SEARCH_FIELD_XPATH,
                         5, "Search field is missing in the HomePage");
         homepageSearchField.click();
     }
 
     public void skipIntro() {
         WebElement skipButton =
-                waitForElementPresented(By.id(Locators.SKIP_BUTTON_ID), 10, "SKIP button is missing");
+                waitForElementPresented(Locators.SKIP_BUTTON_ID, 10, "SKIP button is missing");
         skipButton.click();
     }
 
     public void goToSavedPublicationsFolder() {
-        WebElement savedPublicationsPageButton = waitForElementPresented(By.xpath(Locators.SAVED_BUTTON_XPATH), 10,
+        WebElement savedPublicationsPageButton = waitForElementPresented(Locators.SAVED_BUTTON_XPATH, 10,
                 "Saved button is missing");
         savedPublicationsPageButton.click();
-        WebElement savedPublicationsFolder = waitForElementPresented(By.id(Locators.SAVED_PUBLICATIONS_FOLDER_ID), 10,
+        WebElement savedPublicationsFolder = waitForElementPresented(Locators.SAVED_PUBLICATIONS_FOLDER_ID, 10,
                 "Saved publications folder is missing");
         savedPublicationsFolder.click();
     }
